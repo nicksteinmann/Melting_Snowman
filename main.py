@@ -42,15 +42,6 @@ def get_random_word():
 def display_game_state(mistakes, secret_word, guessed_letters):
     # Display the snowman stage for the current number of mistakes.
     print(STAGES[mistakes])
-    # Build a display version of the secret word.
-    display_word = ""
-    for letter in secret_word:
-        if letter in guessed_letters:
-            display_word += letter + " "
-        else:
-            display_word += "_ "
-    print("Word: ", display_word)
-    print("\n")
 
 
 def play_game():
@@ -61,7 +52,7 @@ def play_game():
     print("Welcome to Snowman Meltdown!")
     print("Secret word selected: ", secret_word)
     display_game_state(mistakes, secret_word, guessed_letters)
-    print(spaceholders(secret_word))
+    print(spaceholders(secret_word, guessed_letters))
 
     # TODO: Build your game loop here.
     # For now, simply prompt the user once:
@@ -70,8 +61,15 @@ def play_game():
     guessed_letters.append(guess)
 
 
-def spaceholders(secret_word):
-    return "_" * len(secret_word)
+def spaceholders(secret_word, guessed_letters):
+    correct_letters_and_spaceholders = ""
+    for char in secret_word:
+        if char in guessed_letters:
+            correct_letters_and_spaceholders += char
+        else:
+            correct_letters_and_spaceholders += "_ "
+
+    return "Word: " + correct_letters_and_spaceholders
 
 
 def check_letter(secret_word, guess):
@@ -81,18 +79,26 @@ def check_letter(secret_word, guess):
 
 def asking_player(secret_word, mistakes):
     mistakes = 0
+    guessed_letters = []
     while mistakes < 3:
+        print("\n")
         guess = input("Guess a letter: ").lower()
         check_if_correct = check_letter(secret_word, guess)  # -> bool
         if check_if_correct:
             print("You guessed: " + guess)
+            guessed_letters.append(guess)
             print(STAGES[mistakes])
-            return guess
+            correct_letters_and_spaceholder = (spaceholders(secret_word, guessed_letters))
+            print(correct_letters_and_spaceholder)
+            if "_" not in correct_letters_and_spaceholder:
+                print("You saved the snowman!")
+                break
         else:
             print("Wrong guess. Try again.")
             mistakes += 1
             print(STAGES[mistakes])
-    print("You lost. Try again.")
+            if mistakes == 3:
+                print("You lost. Try again.")
 
 
 if __name__ == "__main__":
